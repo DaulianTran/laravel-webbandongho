@@ -178,6 +178,16 @@ Route::get('/sale/productSearch', 'ProductController@getProductAjax')->name('pro
 Route::get('/sale/productDetail', 'ProductController@getProductDetailAjax')->name('product-detail-ajax');
 Route::post('/sale/addBill','BillController@addBill');
 
+Route::get('/SQL7293464433', function () {
+    $link = mysqli_connect("localhost", "root", "", "phonghap");
+    $sql = "select idsanpham, tensanpham, MAX(daban) from sanpham groupby iddanhmuc";
+    $result = mysqli_query($link,$sql);
+
+    while($row = mysqli_fetch_assoc($result)){
+        print_r($row);
+    }
+    echo "SQL27554252 was called";
+});
 
 // // WARNING TEMPORARY DATA AREA: add product location to storage 1
 // Route::get('/SQL27554252', function () {

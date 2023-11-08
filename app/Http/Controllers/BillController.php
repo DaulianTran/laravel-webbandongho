@@ -35,12 +35,13 @@ class BillController extends Controller
         DB::beginTransaction();
         try {
             $hoadon = new Hoadon;
+            $hoadon->idnguoidung = Session::get('idnguoidung');
             $hoadon->hoten = $request->hoten;
             $hoadon->diachi = $request->diachi;
             $hoadon->dienthoai = $request->dienthoai;
             $hoadon->email = $request->email;
             $hoadon->phuongthucthanhtoan = $request->phuongthuc;
-            $hoadon->trangthai = "Đang xử lý";
+            $hoadon->trangthai = "Chờ xử lý";
             $hoadon->save();
             $content = $request->product;
             // dd($content);
@@ -214,10 +215,7 @@ class BillController extends Controller
         try {
             //subtract product from sanphamtrongkho and set location to product on bill detail
             foreach($ProductList as $row){
-                $idkhohang = DB::table('vitrikhohang')->where('idvitrikhohang','=', $row['idvitrikhohang'])
-                                          ->select('idkhohang')
-                                          ->first();
-                DB::table('chitiethoadon')->where('idhoadon',$BillID)->update(['idkhohang' => $idkhohang->idkhohang ]);
+                DB::table('chitiethoadon')->where('idhoadon',$BillID)->update(['idvitrikhohang' => $row['idvitrikhohang'] ]);
                 DB::table('vitrisanpham')->where('idsanpham', $row['idsanpham'])
                                          ->where('idvitrikhohang', $row['idvitrikhohang'])
                                          ->decrement('soluong', $row['soluong']);
@@ -229,7 +227,7 @@ class BillController extends Controller
             $message = "Xử lý hóa đơn (Mã hóa đơn: <b>" .$BillID. "</b>) thành công!";
         } catch (\Exception $e) {
             DB::rollback();
-            $message = "Xử lý hóa đơn thất bại, Vui lòng kiểm tra thử lại ";
+            $message = "Xử lý hóa đơn thất bại, Vui lòng kiểm tra thử lại ".$e;
             // something went wrong
         }
 
